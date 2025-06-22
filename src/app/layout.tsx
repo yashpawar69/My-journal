@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: APP_NAME,
   description: 'A blog application to create, read, update, and delete posts with AI-powered tag suggestions.',
+  icons: {
+    icon: '/images/favicon.ico',
+  },
 };
 
 export default function RootLayout({
