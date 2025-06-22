@@ -97,12 +97,22 @@ export function PostForm({ initialData, onSubmit, isEditing = false }: PostFormP
 
   const handleFormSubmit: SubmitHandler<PostFormData> = async (data) => {
     try {
-      await onSubmit(data);
+      const result = await onSubmit(data) as Post | null;
+
+      if (!result) {
+        throw new Error(isEditing ? 'Post not found for update.' : 'Post creation failed.');
+      }
+
       toast({
         title: 'Success!',
         description: `Post ${isEditing ? 'updated' : 'created'} successfully.`,
       });
-      // Navigation is handled by server action's redirect
+
+      if (isEditing) {
+        router.push(`/posts/${result.id}/edit`);
+      } else {
+        router.push('/');
+      }
     } catch (error) {
       console.error('Error submitting post:', error);
       toast({
