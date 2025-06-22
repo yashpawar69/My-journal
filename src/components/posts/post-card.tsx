@@ -30,7 +30,7 @@ export function PostCard({ post }: PostCardProps) {
           <CalendarDays className="h-4 w-4 mr-1.5" />
           <span>Posted on {format(new Date(post.createdAt), 'MMMM d, yyyy')}</span>
           {post.updatedAt.getTime() !== post.createdAt.getTime() && (
-            <span className="ml-2">(Edited: {format(new Date(post.updatedAt), 'MMM d, HH:mm')})</span>
+            <span suppressHydrationWarning className="ml-2">(Edited: {format(new Date(post.updatedAt), 'MMM d, HH:mm')})</span>
           )}
         </div>
       </CardHeader>
