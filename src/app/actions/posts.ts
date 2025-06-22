@@ -2,7 +2,6 @@
 
 import type { Post, PostFormData } from '@/types/post';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 // In-memory store for posts
 let posts: Post[] = [
@@ -46,7 +45,6 @@ export async function createPost(data: PostFormData): Promise<Post> {
   posts.unshift(newPost); // Add to the beginning of the array
   revalidatePath('/');
   revalidatePath(`/posts/${newPost.id}/edit`);
-  redirect('/');
   return newPost;
 }
 
@@ -63,7 +61,6 @@ export async function updatePost(id: string, data: PostFormData): Promise<Post |
   posts[postIndex] = updatedPost;
   revalidatePath('/');
   revalidatePath(`/posts/${id}/edit`);
-  redirect(`/posts/${id}/edit`);
   return updatedPost;
 }
 
