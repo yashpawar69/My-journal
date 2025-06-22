@@ -7,6 +7,7 @@ import { CalendarDays, FilePenLine, Tag } from 'lucide-react';
 import { format } from 'date-fns';
 import { PostCardActions } from './post-card-actions';
 import { MAX_POST_CONTENT_PREVIEW_LENGTH } from '@/lib/constants';
+import { PostAudioPlayer } from './post-audio-player';
 
 interface PostCardProps {
   post: Post;
@@ -45,14 +46,17 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         )}
       </CardContent>
-      <CardFooter className="flex justify-end gap-2 border-t pt-4">
-        <PostCardActions postId={post.id} postTitle={post.title} />
-        <Button asChild variant="outline">
-          <Link href={`/posts/${post.id}/edit`}>
-            <FilePenLine className="mr-2 h-5 w-5" />
-            Edit
-          </Link>
-        </Button>
+      <CardFooter className="flex flex-col items-stretch gap-4 border-t pt-4">
+        <PostAudioPlayer postContent={post.content} />
+        <div className="flex justify-end gap-2">
+          <PostCardActions postId={post.id} postTitle={post.title} />
+          <Button asChild variant="outline">
+            <Link href={`/posts/${post.id}/edit`}>
+              <FilePenLine className="mr-2 h-5 w-5" />
+              Edit
+            </Link>
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   );
