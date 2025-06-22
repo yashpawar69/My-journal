@@ -1,4 +1,4 @@
-# **App Name**: PersistJournal
+# **App Name**: My Journal
 
 ## Core Features:
 
