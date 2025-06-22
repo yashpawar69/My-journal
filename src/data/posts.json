@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "title": "My First Blog Post",
+    "content": "This is the content of my very first blog post. I am excited to share my thoughts with the world. It covers various topics including technology, life, and coding.",
+    "tags": [
+      "introduction",
+      "blogging",
+      "tech"
+    ],
+    "createdAt": "2023-10-01T10:00:00.000Z",
+    "updatedAt": "2023-10-01T10:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Exploring Next.js 14",
+    "content": "Next.js 14 has brought some amazing features, including improved server actions and app router capabilities. This post delves into how these can be leveraged for modern web development.",
+    "tags": [
+      "nextjs",
+      "webdev",
+      "javascript",
+      "react"
+    ],
+    "createdAt": "2023-10-15T14:30:00.000Z",
+    "updatedAt": "2023-10-16T09:15:00.000Z"
+  }
+]
