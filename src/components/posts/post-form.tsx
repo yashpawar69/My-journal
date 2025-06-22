@@ -109,11 +109,11 @@ export function PostForm({ initialData, onSubmit, isEditing = false }: PostFormP
       });
 
       if (isEditing) {
-        router.push(`/posts/${result.id}/edit`);
+        // We are on the edit page, just refresh to see changes
         router.refresh();
       } else {
-        // This forces a full page reload to ensure the new post is visible.
-        window.location.href = '/';
+        // We are on the create page, navigate to home to see the new post
+        router.push('/');
       }
     } catch (error) {
       console.error('Error submitting post:', error);
