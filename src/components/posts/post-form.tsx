@@ -110,8 +110,10 @@ export function PostForm({ initialData, onSubmit, isEditing = false }: PostFormP
 
       if (isEditing) {
         router.push(`/posts/${result.id}/edit`);
+        router.refresh();
       } else {
-        router.push('/');
+        // This forces a full page reload to ensure the new post is visible.
+        window.location.href = '/';
       }
     } catch (error) {
       console.error('Error submitting post:', error);
