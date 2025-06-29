@@ -2,7 +2,7 @@
 // It prevents new connections from being made on every hot-reload in development.
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI = process.env.MONGODB_URI?.trim();
 
 if (!MONGODB_URI) {
   throw new Error(

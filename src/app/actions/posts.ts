@@ -4,7 +4,7 @@ import type { Post, PostFormData } from '@/types/post';
 import { revalidatePath } from 'next/cache';
 import dbConnect from '@/lib/mongodb';
 import PostModel from '@/models/post';
-import { isValidObjectId } from 'mongoose';
+import mongoose, { isValidObjectId } from 'mongoose';
 
 /**
  * Converts a Mongoose document to a plain JavaScript object
@@ -29,6 +29,9 @@ export async function getPosts(): Promise<Post[]> {
     return postDocs.map(serializePost);
   } catch (error) {
     console.error('Database error (getPosts):', error);
+    if (error instanceof mongoose.Error.MongooseServerSelectionError) {
+      throw new Error('Database connection failed. Please check your MongoDB Atlas IP whitelist settings.');
+    }
     throw new Error('Failed to fetch posts.');
   }
 }
@@ -44,6 +47,9 @@ export async function getPost(id: string): Promise<Post | undefined> {
     return serializePost(postDoc);
   } catch (error) {
     console.error(`Database error (getPost: ${id}):`, error);
+    if (error instanceof mongoose.Error.MongooseServerSelectionError) {
+      throw new Error('Database connection failed. Please check your MongoDB Atlas IP whitelist settings.');
+    }
     throw new Error('Failed to fetch post.');
   }
 }
@@ -60,6 +66,9 @@ export async function createPost(data: PostFormData): Promise<Post> {
     return serializePost(newPostDoc);
   } catch (error) {
     console.error('Database error (createPost):', error);
+    if (error instanceof mongoose.Error.MongooseServerSelectionError) {
+      throw new Error('Database connection failed. Please check your MongoDB Atlas IP whitelist settings.');
+    }
     throw new Error('Failed to create post.');
   }
 }
@@ -82,6 +91,9 @@ export async function updatePost(id: string, data: PostFormData): Promise<Post |
     return serializePost(updatedPostDoc);
   } catch (error) {
     console.error(`Database error (updatePost: ${id}):`, error);
+    if (error instanceof mongoose.Error.MongooseServerSelectionError) {
+      throw new Error('Database connection failed. Please check your MongoDB Atlas IP whitelist settings.');
+    }
     throw new Error('Failed to update post.');
   }
 }
@@ -98,6 +110,9 @@ export async function deletePost(id: string): Promise<void> {
     revalidatePath('/');
   } catch (error) {
     console.error(`Database error (deletePost: ${id}):`, error);
+    if (error instanceof mongoose.Error.MongooseServerSelectionError) {
+      throw new Error('Database connection failed. Please check your MongoDB Atlas IP whitelist settings.');
+    }
     throw new Error('Failed to delete post.');
   }
 }
