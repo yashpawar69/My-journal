@@ -1,5 +1,17 @@
 [
   {
+    "title": "This Is my journal",
+    "content": "I am checking this Create function for my internship \n",
+    "tags": [
+      "programming",
+      "internship",
+      "software development"
+    ],
+    "id": "1751180536409",
+    "createdAt": "2025-06-29T07:02:16.409Z",
+    "updatedAt": "2025-06-29T07:02:16.409Z"
+  },
+  {
     "title": "My First Internship ",
     "content": "I am Finally ready to step into. my first Internship . I am excited",
     "tags": [
@@ -22,18 +34,5 @@
     ],
     "createdAt": "2023-10-01T10:00:00.000Z",
     "updatedAt": "2023-10-01T10:00:00.000Z"
-  },
-  {
-    "id": "2",
-    "title": "Exploring Next.js 14",
-    "content": "Next.js 14 has brought some amazing features, including improved server actions and app router capabilities. This post delves into how these can be leveraged for modern web development.",
-    "tags": [
-      "nextjs",
-      "webdev",
-      "javascript",
-      "react"
-    ],
-    "createdAt": "2023-10-15T14:30:00.000Z",
-    "updatedAt": "2023-10-16T09:15:00.000Z"
   }
 ]

@@ -6,19 +6,21 @@
 
 ## 🔧 Tech Stack
 
-- **Frontend:** React / Next.js  
-- **Backend:** Node.js + Express  
-- **Database:** MongoDB (Mongoose)  
-- **Styling:** Tailwind CSS   
+- **Framework:** React / Next.js (with Server Actions)
+- **Database:** MongoDB (with Mongoose)
+- **AI:** Google Gemini (via Genkit)
+- **Styling:** Tailwind CSS & ShadCN UI
 
 ---
 
 ## 🚀 Features
 
-- ✍️ Create, edit, delete posts  
-- 🧾 Markdown or rich-text support  
-- 🧠 AI-assisted development (ChatGPT + Copilot)  
-- 📱 Mobile responsive  
+- ✍️ Create, read, update, delete posts (CRUD)
+- 🤖 AI-powered tag suggestions
+- 🎧 Text-to-speech for posts
+- 📅 Activity calendar view
+- 🔍 Search functionality
+- 📱 Mobile responsive
 
 ---
 
@@ -27,4 +29,3 @@
 **Yash Pawar**  
 📧 yashpawar69@example.com  
 🔗 [GitHub](https://github.com/yashpawar69/My-journal.git)
-

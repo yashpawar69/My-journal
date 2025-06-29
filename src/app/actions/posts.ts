@@ -2,103 +2,102 @@
 
 import type { Post, PostFormData } from '@/types/post';
 import { revalidatePath } from 'next/cache';
-import fs from 'fs/promises';
-import path from 'path';
+import dbConnect from '@/lib/mongodb';
+import PostModel from '@/models/post';
+import { isValidObjectId } from 'mongoose';
 
-// Path to the JSON file that acts as our database
-const postsFilePath = path.join(process.cwd(), 'src', 'data', 'posts.json');
-
-// Helper function to read posts from the file
-async function readPostsFromFile(): Promise<Post[]> {
-  try {
-    const fileContent = await fs.readFile(postsFilePath, 'utf-8');
-    const posts = JSON.parse(fileContent);
-    // Convert date strings back to Date objects
-    return posts.map((post: any) => ({
-      ...post,
-      createdAt: new Date(post.createdAt),
-      updatedAt: new Date(post.updatedAt),
-    }));
-  } catch (error: any) {
-    // If the file doesn't exist or is empty, initialize it
-    if (error.code === 'ENOENT') {
-      await writePostsToFile([]); // Create the file with an empty array
-      return [];
-    }
-    console.error('Failed to read posts from file:', error);
-    return [];
-  }
+/**
+ * Converts a Mongoose document to a plain JavaScript object
+ * that matches the `Post` type.
+ * @param doc A Mongoose document.
+ * @returns A plain object.
+ */
+function serializePost(doc: any): Post {
+  const post = JSON.parse(JSON.stringify(doc));
+  return {
+    ...post,
+    id: post._id.toString(),
+    createdAt: new Date(post.createdAt),
+    updatedAt: new Date(post.updatedAt),
+  };
 }
-
-// Helper function to write posts to the file
-async function writePostsToFile(posts: Post[]): Promise<void> {
-  try {
-    // Ensure the directory exists
-    await fs.mkdir(path.dirname(postsFilePath), { recursive: true });
-    await fs.writeFile(postsFilePath, JSON.stringify(posts, null, 2), 'utf-8');
-  } catch (error) {
-    console.error('Failed to write posts to file:', error);
-    throw new Error('Could not save posts.');
-  }
-}
-
 
 export async function getPosts(): Promise<Post[]> {
-  const posts = await readPostsFromFile();
-  return posts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  try {
+    await dbConnect();
+    const postDocs = await PostModel.find({}).sort({ createdAt: -1 });
+    return postDocs.map(serializePost);
+  } catch (error) {
+    console.error('Database error (getPosts):', error);
+    throw new Error('Failed to fetch posts.');
+  }
 }
 
 export async function getPost(id: string): Promise<Post | undefined> {
-  const posts = await readPostsFromFile();
-  return posts.find(post => post.id === id);
+    if (!isValidObjectId(id)) {
+        return undefined;
+    }
+  try {
+    await dbConnect();
+    const postDoc = await PostModel.findById(id);
+    if (!postDoc) return undefined;
+    return serializePost(postDoc);
+  } catch (error) {
+    console.error(`Database error (getPost: ${id}):`, error);
+    throw new Error('Failed to fetch post.');
+  }
 }
 
 export async function createPost(data: PostFormData): Promise<Post> {
-  const posts = await readPostsFromFile();
-  const newPost: Post = {
-    ...data,
-    id: Date.now().toString(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-  const updatedPosts = [newPost, ...posts]; // Add to the beginning
-  await writePostsToFile(updatedPosts);
-  
-  revalidatePath('/');
-  revalidatePath(`/posts/create`);
-  revalidatePath(`/posts/${newPost.id}/edit`);
-  return newPost;
+  try {
+    await dbConnect();
+    const newPostDoc = await PostModel.create(data);
+    
+    // Revalidate paths to ensure fresh data is shown
+    revalidatePath('/');
+    revalidatePath('/posts/create');
+
+    return serializePost(newPostDoc);
+  } catch (error) {
+    console.error('Database error (createPost):', error);
+    throw new Error('Failed to create post.');
+  }
 }
 
 export async function updatePost(id: string, data: PostFormData): Promise<Post | null> {
-  const posts = await readPostsFromFile();
-  const postIndex = posts.findIndex(post => post.id === id);
-  if (postIndex === -1) {
-    return null;
+    if (!isValidObjectId(id)) {
+        return null;
+    }
+  try {
+    await dbConnect();
+    const updatedPostDoc = await PostModel.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    if (!updatedPostDoc) {
+      return null;
+    }
+
+    // Revalidate relevant paths
+    revalidatePath('/');
+    revalidatePath(`/posts/${id}/edit`);
+
+    return serializePost(updatedPostDoc);
+  } catch (error) {
+    console.error(`Database error (updatePost: ${id}):`, error);
+    throw new Error('Failed to update post.');
   }
-  
-  const updatedPost: Post = {
-    ...posts[postIndex],
-    ...data,
-    updatedAt: new Date(),
-  };
-  posts[postIndex] = updatedPost;
-  
-  await writePostsToFile(posts);
-  revalidatePath('/');
-  revalidatePath(`/posts/${id}/edit`);
-  return updatedPost;
 }
 
 export async function deletePost(id: string): Promise<void> {
-  const posts = await readPostsFromFile();
-  const updatedPosts = posts.filter(post => post.id !== id);
-  
-  if (posts.length === updatedPosts.length) {
-    // Post not found, maybe throw an error or just do nothing
-    return;
+    if (!isValidObjectId(id)) {
+        return;
+    }
+  try {
+    await dbConnect();
+    await PostModel.findByIdAndDelete(id);
+    
+    // Revalidate home page to reflect deletion
+    revalidatePath('/');
+  } catch (error) {
+    console.error(`Database error (deletePost: ${id}):`, error);
+    throw new Error('Failed to delete post.');
   }
-  
-  await writePostsToFile(updatedPosts);
-  revalidatePath('/');
 }
